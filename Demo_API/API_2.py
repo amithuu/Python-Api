@@ -5,7 +5,7 @@ app = Flask(__name__)
 # example for get request..
 
 
-@app.route("/get-user/<user_name>")  # <user_name> what ever the variable ritter inside the < > is the requested variable, path
+@app.route("/get-user/<user_name>")  # <user_name> what ever the variable written inside the < > is the requested variable, path
 def get_user(user_name):
     data_set = {"user_name": user_name, "message": " Hi i got the user user name i am learning get method in api", "name": "amith", "email": "amittalentplace@gmail.com"}
     get_data = request.args.get("extra")
