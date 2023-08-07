@@ -106,12 +106,194 @@ we need to import:
 
 Here we are handling the user when he comes to home page.
 
-To redirect user we are creating a "urls.py" file, where we  map0 thebfunction for each view/page user view.
+To redirect user we are creating a "urls.py" file, where we  map the function for each view/page user view.
 
-# this urls file will be same as "urls.py" we saw in under blogs.
+# This "blog/urls.py" file will be same as "urls.py" in django_project.
 
-# Create a file called urls.py and add the path to Home page.
+# Create a file called "urls.py" under blog and add the path to Home page.
+
+# to add the path we need to import files from "views.py" and "path" as well
+<!-- from . import views
+from django.urls import path -->
+
+# we create a constructer as same as in "urls.py" in django_project.
+<!-- 
+urlpatterns = [
+    path('',views.home, name='blog-home')
+] --> 
+# here '' is the extension path for the home page. and we are calling the home function from here.
+
+# Then we need to connect "blog/urls.py" file into  "urls.py" in django_project.
+<!-- we need to include import it comes with path as well.
+    in urlpatterns constructer we can add another path. -->
+
+<!--path('blog/', include('blog/urls)), -->
+
+# once after this run the server and check.
+
+# further if we need to add  more function's ex: about, we can just keep on adding in "blog/urls.py" and in the functions in "views.py" file.
+
+in views:
+<!-- def about(request):
+        return HttpResponse("<h1> hi this is about page </h1>") -->
+
+in urls.py:
+    path('about/', views.py,name='about-page'),
+
+# if we run trhe server we get both the page.[localhost:8000/blog/about] //for about page and [localhost:8000/blog/] //for home page.
+
+
+<!-- ################################################################################ -->
+# end of basics:
+from line 200 advance:
 
 
 
-<!-- this is end-->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# we cant keep creating functions for all so we are adding a single page to every single templates and the using the templates we are accesing each and every file.
+
+# Create a folder under blog names "templates" and under templates create another folder "blog"
+blog -> temaplates -> blog 
+
+# create a file for each of the functions under blog folder.
+blog -> temaplates -> blog ---// home.html
+
+
+# once this is created go to "views.py" file 
+# previosly we used to use HttpResponce for the accessing of the file, we can sue another function as we are rendering the file from another folder.. we use 
+<!-- from django.shortcuts import render -->
+
+# In ther created function home, change the return statement as 
+
+<!-- return render(request,'blog/home.html') -->
+        <!-- return HttpResponse("<h1> hi this is home page </h1>") -->
+        <!-- return render(request, 'path of the file located')-->
+
+
+# Lets try to access some dummy created by cerating a dummy data form the dictonary//
+# we are passing the dummy data inside the list/dictornary so that using key:value we can access the data easily..
+
+    ex: posts=[
+       {
+        'author': 'amith',
+        'title': 'blog1',
+        'dateposted': 'january'
+    },
+    {
+        'hi':'hello',
+        'wfh':'yes'
+    }
+    ]
+
+# to access this data we need to create a list and an obj which is easier to access the above dummy data.
+
+inside the function
+ex: def home(request):
+        context={
+           #obj 'storealldata'=posts # dummy data list name.[all the data will be stored in the object]
+        }
+        return render(request, 'file path name', context)[render function accepts only 3 parameters so we are passing the context through ehich we can access the data.]
+
+# the another thing in here we need to access the data in html file.// for that we use 
+<!-- <body>
+            {% for post in storealldata %}   # storealldata is the variable dictonary where we have stored our data
+                <h1> {{post.author}}</h1>
+                <p> {{post.title}}</p>
+                <p>on {{post.dateposted}}</p>
+            {% endfor %}  # ending of this very important
+        </body> -->
+
+# This is the another method, as we are writing the same lines of code several times we can make a static file where we can store a similary code and change once for all, when we needed.
+# that is done by cerating an another file called "base.html" under "blog" 
+        <!-- "templates->blog->base.html" -->
+
+# once the file is created we add the repeated code to that file, and logic og each page in a "{block}"
+for ex:
+<!-- <!DOCTYPE html>
+<html>
+    <head>
+
+        {% if title %}
+            <title> learning {{title}}</title>
+        {% else %}
+            <title> started learning</title>
+        {% endif %}
+
+        <body>
+            {% block content%} {% endblock content%}
+        </body>
+
+    </head>
+</html> -->
+
+# As in the home.html and the about.html there is an logic difference between the body so we are making it as block and all the other things as static.
+
+# now in home page
+# * first we need to extend the base.html file to home.html, so for that we use 
+<!-- {% extends 'blog/base.html'%} -->
+# * and next create a block where the logic has to be. {block}
+
+for home page
+<!-- {% extends 'blog/base.html'%} -->
+<!-- {% block content%}
+        {% for post in store %}
+            <h1> {{post.author}}</h1>
+            <p> {{post.title}}</p>
+            <p>on {{post.dateposted}}</p>
+        {% endfor %} 
+      {% enbdblock content %}  -->
+
+for about page
+<!-- {% extends 'blog/base.html'%}
+{% block content %} 
+    <h1> this is about page </h1>
+{% endblock content %} -->
+
+# THE BIG USE OF THIS IS, WE NO NEED TO WRITE ALL THE THINGS JUST WE NEED TO MAKE CHNAGES IN BLOG WHERE IT WILL CHANGE IN ALL THE PAGES.
