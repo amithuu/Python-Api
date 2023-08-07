@@ -1,10 +1,11 @@
 what is Django:
 CGI: common gate way intefrace..
 
+[pip install django]
 
     this is an open source web development framework,,hwich is mainy used to framework..
 
-:::some of the admin classes/function  of django:django-admin
+# some of the admin classes/function  of django:django-admin
 
 check
     compilemessages
@@ -33,11 +34,84 @@ check
     testserver
 
 
-    # to start the project we use  
-                                        #_____django-admin startproject django_project
+# to start the project we use
+<!-- django-admin startproject django_project -->
 
-    to change the directory we use:
-change directory to project/filename:
-                                        #____ cd django_project/
+# to change the directory we use:
+<!-- cd filename -->
+
+# change directory to project/filename:
+<!-- cd django_project/ -->
+
+# after this got the file and view there will be a project present in file..
+
+<!-- add that entire file to code editor.. -->
+<!-- and in that we have settings/init/url/wsgi/manage files.. -->
+
+# Some of the files we find once the directory is found.
+
+<!-- init: this is the file where it shouws it is pyhton file project..
+
+settings : this is the file that where our security and some predefined application given by django is stored..
+
+url: this is the section where our all page urs will be stored..[admin/], where we can use the admin section using "www.our.application.admin/"
+
+wsgi: this is the file which is used to connect the python and the web appilication.. -->
 
 
+# once after this we need to run:
+
+<!-- python manage.py runserver -->
+# which gives us the localhost server 127:0:0:1:8000 port
+
+where we can acces this link and check..
+we can change the link to
+
+<!-- 127:0:0:1:8000 -->
+
+we can check for admin block as we have in url-file,
+
+<!-- localhost:8000/admin -->
+
+# to set any new url of the page we can use url_py;
+
+eg:
+
+<!-- urlpatterns=[
+    path('dashboard/', dashboard.site.urls),
+] -->
+
+
+after the use we can close our local host we can use:
+
+<!-- CTRL C: to stop the server. -->
+
+# to start the  django app we use command:
+
+ <!-- python manage.py startapp blog -->  [we can check these command are available in help command]
+        [BLOG is the file name u want to create..]
+
+# once the file blog is created now we start building our application home page function
+[ i am writing function to handle the traffic of the home page when user logins.. ]
+
+for that we need to take responces from user, so we need to request for the user.
+
+we need to import:
+<!-- from django.http import HttpResponce --> this import will collect the respoce from the users..
+
+# Creating the function home(request) which is used sen dthe request and collect the responce..
+
+<!-- def home(request):
+        return HttpResponse("<h1> hi this is home page </h1>") -->
+
+Here we are handling the user when he comes to home page.
+
+To redirect user we are creating a "urls.py" file, where we  map0 thebfunction for each view/page user view.
+
+# this urls file will be same as "urls.py" we saw in under blogs.
+
+# Create a file called urls.py and add the path to Home page.
+
+
+
+<!-- this is end-->
