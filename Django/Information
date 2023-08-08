@@ -297,3 +297,17 @@ for about page
 {% endblock content %} -->
 
 # THE BIG USE OF THIS IS, WE NO NEED TO WRITE ALL THE THINGS JUST WE NEED TO MAKE CHNAGES IN BLOG WHERE IT WILL CHANGE IN ALL THE PAGES.
+
+# To make our project little intresting  added some "html nav bar code" inside body and "main html" as well,  and  AS WE NEED CSS WHICH IS STATIC SO  CREATE A FOLDER CALLED :STATIC: INSIDE STATIC CREATE ANOTHER FOLDER CALLED :BLOG: AS IT IS OUR APP NAME, INSIDE THAT CREATE A MAIN.CSS FILE 
+
+"BLOG -> STATIC -> BLOG -> .CSS FILE"
+
+# after that run the server again so that css gets load..
+
+# In main file that is "basic.html" we have given .about, /blog[which is not correct if anything chnages we need to chnage in all place]  so change the path to [url 'name of the file given in "views.html"] 
+ex:
+
+<!--   <a class = "navbar-item nav-link" href="{% url 'blog-home'%}">Home</a>
+        <a class = "navbar-item nav-link" href="{% url 'blog-about' %}">About</a> 
+-->
+
