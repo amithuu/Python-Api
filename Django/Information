@@ -311,3 +311,251 @@ ex:
         <a class = "navbar-item nav-link" href="{% url 'blog-about' %}">About</a> 
 -->
 
+<!-- ################################################################################### -->
+# continue from line 330
+# creating a :admin-user: "Super User"
+
+
+
+
+
+
+
+
+
+
+
+
+
+# We are creating the admin user for the admin acces which is Super User
+<!-- To Create Super User we have a command "createsuperuser" -->
+<!-- python manage.py createsuperuser -->
+# Run the command by stopping the server
+
+* Error[ an error will be generated beacuse of teh below reason.] 
+
+    <!-- django.db.utils.OperationalError: no such table: auth_user -->
+
+    # why error??
+    # Since we havn't created a database that we user for this project!!
+
+# creating a database is simple here, just we need to run few "Migration" command.
+
+# ":migration": is basicly used to apply the changes to database.
+
+Once we use migration as we haven't created databsed it adds some tables to the database , and then it allows "createsuperuser"
+
+<!-- python manage.py makemigrations -->
+
+# after running the command o/p will be "No Changed Detected" [as the migration is  creating database] !!! [if user have created database user will get changed displayed.!! ]
+
+
+# To apply the changes in migrations need to run this command:
+ <!--python manage.py migrate  -->
+# [which helps the migrations to update]
+
+# once after running above command now you can create your super-user:
+
+<!-- python manage.py createsuperuser
+Username (leave blank to use 'chiku'): amith
+Email address: amithtalentplace@gmail.com
+Password: New@1234
+Password (again): New@1234
+Superuser created successfully. -->
+
+
+# After this run the server again
+
+# [ U will be able to watch the admin blof try login , once you enter click on users and username which u created!!]
+
+U will get to see the Password: with some [#labels] which is the added more security in Django.
+
+<!-- ex:
+password: algorithm: pbkdf2_sha256 iterations: 600000 salt: MSw5ES**************** hash: Sp5B1i************************************** -->
+
+[we can add users there /delete users / can provide the permission there itself.]
+
+
+
+# Creting own Database:
+ # [To work with the data base, jango has the excellent advantage which is "ORM" in it..]
+
+ ORM: "OBJECT RELATIONAL MAPPER": 
+# We can access database easily using the objects, and we can access other database as well without changing the code.
+
+# Using SQLlite for the devlopment and Postgres database for the production..
+
+# any changed in the database or updation , will be done in "blog/model.py" file..
+
+
+# In "models.py" where we wanna think what need to store in our database.[ can  create a user from here as well and add some more fields than in amdin page for the users]
+# [to do all these we need a databse model, which is already created by the Django, can     inherit the models class.]
+# [Can create our owm model as well.]]
+
+
+# now we are creating a class/ which is Table called :Post: in which we are giving the column names we need.
+
+class Post(models.Model):                     <!--[models.Model]-> using this we create a table in the database [for models we need to "import from django.db import models"] -->
+    title=models.Charfeild(max_length=100)                   -> <!-- there are the attributes that we are adding to the table Post..-->
+     author=models.TextFeild()                                -> <!--Charfeild and TextFeild are same but text feild doesnt has any limit.. -->
+    date_posted = models.DateTimeField(default=timezone.now) -> <!-- For the date attribute provide date format, for "default" we need to "import timezone from django.utils" -->
+    author = models.Foreignkey(User, on_delete=models.CASCADE) -> <!-- author name we are taking form the "User" database table, so making it as ForignKey, and on_delete, means if the author gets delete in "User" table then just delete the name of the author from the Post table , dont delete the data form database. -->
+
+ex:
+class Post(models.Model):
+    title = models.CharField(max_length=100)
+    content = models.TextField()
+    date_posted = models.DateTimeField(default=timezone.now)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+
+# after creating the file adding/creating the above database table
+
+# We need to add it to the database , so for that we need to run the migrations
+
+<!-- python manage.py makemigrations --> [which means make the changes in database.]
+
+# after running this the Django, creates it folder as "migrations" under blog.
+<!-- Migrations for 'blog':
+  blog/migrations/0001_initial.py  
+    - Create model Post -->
+    blog -> migrations -> 00001_initial.py
+
+# to get the sql query for t5he above table need ti run the command.
+
+<!-- python manage.py sqlmigrate blog 0001 -->[blog 0001]-> is the app name and file name
+
+BEGIN;
+--
+-- Create model Post
+--
+CREATE TABLE "blog_post" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "title" varchar(100) NOT NULL, "content" text NOT NULL, "date_posted" datetime NOT NULL, "author_id" integer NOT NULL REFERENCES "auth_user" ("id") DEFERRABLE INITIALLY DEFERRED);
+CREATE INDEX "blog_post_author_id_dd7a8485" ON "blog_post" ("author_id");
+COMMIT;
+
+<!--  Then save it to database using python manage.py migrate -->
+
+# To access the data we need to run in "python shell"
+so, 
+<!-- python manage,py shell -->
+
+# now we need to import the files to shell soo,
+
+<!-- from blog.models import Post 
+     from django.contrib.auth.models import User -->
+
+<!-- To print the data from User or Post we use, "Tablename.objects.all()"-->
+ex:
+<!-- User.objects.all()
+    Post.objects.all() -->
+
+# We can use the filter as well to get the data
+
+ex:
+<!-- User.objects.all()  -> which return all the record -->
+<QuerySet [<User: amith>, <User: Sudeshdas>]>
+<!-- User.objects.first() -> which gives the first record -->
+<User: amith>
+<!-- User.objects.last()  -> which gives the last user from the table. -->
+<User: Sudeshdas>
+
+<!-- User.objects.filter(username='amith') -> Gets the name with amith from the db  -->
+<User: amith>
+<!-- User.objects.filter(username = 'amith').first()  gets the name with amith with the first matching record from the db..-->
+<User: amith>
+
+# by using variable as well we can store and gets the data:
+<!-- user = User.objects.filter(username = 'amith').first() -->
+<!-- user -->
+
+# As the migration file we saw, the id has been created for every user incrementally, we can access the user using ID as well.
+
+<!-- user.id --> [as in user amith is stired where his id :1]
+1
+
+<!-- user.pk --> [we can get the id using primary key as well]
+1
+
+<!-- user = User.objects.get(id=1)  -> using this filter as well can fetch the data. -->
+<!-- user -->
+<User: amith>
+
+# Without adding any data when we try to access we get like
+<!-- Post.objects.all() -->
+<QuerySet []>
+
+ # To add the data
+<!-- post_1 = Post(title='django',author= user,content='learning django it is awesome') 
+        -> as already in user variable we have the 'amith' so in field of author we used "user", and as default function gives the date base don current date, so no nned to add that attribute..-->
+
+# save the data
+<!-- post_1.save() -->
+
+# when we try to view the data 
+<!-- Post.objects.all() -->
+<QuerySet [<Post: Post object (1)>]>
+
+
+# As we have only addedd attributes in "Post" function there is no return statement so we get like the above thing..
+
+# exit from the shell 
+<!-- exit() -->
+
+# Need to create a dunder STR method in "models.py file" [any data we need to print on shell]
+
+<!-- def __str__(self):
+        return self.title -->
+
+
+#  to get the updated files, re-open all the "import files" then access.
+
+<!-- pyhton manage.py shell -->
+
+ <!--  from blogs.models import Post 
+       from django.contib.auth.models import User-->
+
+<!-- Post.objects.all() -->
+<QuerySet [<Post: Django>]>
+
+<!-- user1 = User.objects.filter(username='sudeshdas').firstname()
+user1 -->
+<User: Sudeshdas>
+
+<!-- post_2 = Post(title='ReactJs', author='user1',content='good in react') -->
+<!-- post_2.save() -->
+# we can sue user1.id as well for author name!
+<!-- post_2 = Post(title='ReactJs', author='user1.id',content='good in react') -->
+<!-- post_2.save() -->
+
+<!-- Post.objects.all() -->
+<QuerySet [<Post: Django>, <Post: ReactJs>]>
+
+<!-- post = Post.objects.first() -> stroing all the details of the first user in post variable, so that we can accces all theb data using the variable itself.  -->
+
+<!-- post.content -->
+'learning django it is awesome'
+
+<!-- post.id -->
+1
+
+<!-- post.author -->
+<User: amith>
+
+<!-- post.email  -> here as we are not storing the email in "Post" class but still we are able to get the all data of teh user[because of the foreign key.] -->
+'amithtalentplace@gmail.com'
+
+<!-- post.date_posted  -->
+datetime.datetime(2023, 8, 8, 8, 41, 18, 611145, tzinfo=datetime.timezone.utc)
+
+
+# to get all the posts posted by the user we can view like.
+[Syntax: modelname/variablename.post_set.all()]
+
+<!-- user.post_set.all() -> to get all the posts for the user-->
+<QuerySet [<Post: Django>]>
+
+<!-- user1.post_set.all() -> to get all the posts for the user1-->
+<QuerySet [<Post: ReactJs>]>
+
+
+
+
