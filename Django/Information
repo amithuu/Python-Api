@@ -556,6 +556,180 @@ datetime.datetime(2023, 8, 8, 8, 41, 18, 611145, tzinfo=datetime.timezone.utc)
 <!-- user1.post_set.all() -> to get all the posts for the user1-->
 <QuerySet [<Post: ReactJs>]>
 
+# Can create a post using the post_set() function as well!!
+ex:
+# We have a user which has one post[whose author is amith]
+
+<!-- user.post_set.create(title='Python', content='this is post created using post_set fucntion') -> we are not adding the author here bcz, we have a default authir how is user.-->
+<Post: Python>
+<!-- user.post_set.all() -->
+<QuerySet [<Post: Django>, <Post: Python>]>
+
+# Prevously we used to get the posts from the dummy data that was created in "views.py", but now can access through database, for that,
+
+<!-- in views.py impot the models and Post
+from .models import Post
+def home(request):
+    context = {
+            'posts': Post.objects.all()  -> this is fecth all the Posts from the Post class..![which we stored in db.] 
+    }
+    return render(request, 'blog/home.html', context) -->
+
+    posts = [
+    {
+        'author': 'Amith',
+        'title': 'Learning Django',
+        'date_posted': 'Today',
+        'content': 'this is Django learning time!!!'
+    },
+    {
+        'author': 'Sudesh',
+        'title': 'Learning Django',
+        'date_posted': 'Dont Know',
+        'content': 'this is Django learning time!!!'
+    }
+][the dummy data whoch we have provided the attributes name should be same in db as well, beacuse we have used these database names to fetch the data in home/about .html file soo.]
+
+# Aswe are getting the date in [ Aug. 8, 2023, 8:41 a.m.] in posts we can filter using the [|date: "format"]
+ex: we are using date in home page, so lets change it there,
+<small class ="text-muted">{{post.date_posted}}</small>
+Aug. 8, 2023, 8:41 a.m.
+<small class ="text-muted">{{post.date_posted|date:"F d, Y"}}</small>
+ August 08, 2023
+
+ # we dont need the dummy data now as we have the database.
+
+# ADDING THE POST DATA TO ADMIN PANEL AS WELL..
+
+# Need to do it in "admin.py" under "blogs" 
+<!-- from .models import Post 
+      admin.site.register(Post) -> we are regitering the Post class to admin page!!!
+      -->
 
 
+<!-- ######################################################################## -->
+# Now adding the users an trying to get there data as well..
 
+# Not to merge the superuser data and real users data , create a neww "app" under the project, so that finding will be easy..
+
+# Create an new app for the usres
+<!-- python manage.py startapp users -->
+ # A new folder will be created.!
+
+ # Inside the folder in "views.py" crete a form..
+ [To create a form in Django we can create it easily by impoting the UserCreationForm]
+
+ <!-- from django.contrib.auth.froms import UserCreationForm -->
+
+ # create a function which renders the "page".
+
+ <!-- def register(request):
+        form = UserCreationForm() --> 
+         [this will create an instance for the inbuild-form in django]
+<!--    return render(request, 'users/register.html', {'form':form}) --> 
+# still we have not created the "users/register.html" file its the next step.
+        [as in the blog  created the context and added the context in parameter, so here now creating the "form" and rendering through its :instance:form  ]
+    
+<!-- def register(request):
+    form = UserCreationForm()
+    return render(request, 'users/register.html', {'form':form}) -->
+
+# Create a file under "users" as folder "templates" in it folder "users" in it "register.html"
+users-> templates -> users -> register.html
+
+# In this .html file {% add the block and content needed. to be dislayed on the screen%}
+
+# To get the {% block fiest we need the "basic.html" page that we have not creted yet, so we are importing from "blog"%} 
+<!-- {% extends 'blog/base.html' %} -->
+{% block content%}
+    <div class = content-section>
+        <form method='POST'>
+            {% csrf_token %} -> this the security path for the forms from peach attacks
+            <fieldset class = 'form-group'>
+                <legend class = 'border-botton mb-4'>Join today </legend>
+                {{form.as_p}} -> to get the form in para format we use this.
+                {{form}} -> if we take only form we might not get the items in the proper spacing
+            </fieldset>
+
+            <div class = 'form-group'>
+                <button class = 'btn btn-putline-info' type='submit'> Sign Up</button>
+            </div>
+        </form>
+
+        <div class = border-top pt-3>
+            <small class = 'text-muted'> Already have an account? 
+                <a class = ml-2 href="#>Sign In</a>
+            </small>
+        </div>
+    </div>
+{% endblock content%}
+
+
+# Which gives us the form on the "register", when we run the server
+
+<!-- localhost:8000/register -->
+    
+# [Now after taking the input and click on sign-up there is save of responce in amin panel]
+
+<!-- def register(request):
+    form = UserCreationForm()
+    return render(request, 'users/register.html', {'form':form}) -->
+
+ <!-- def register(request): -->
+  <!-- if request.method == 'POST': -->
+    we are checking if user is poting the data or not.
+
+  <!-- form = UserCreationForm(request.POST) --> 
+        if user is posting the data then we are creating a new form here.
+
+  <!-- if form.valid(): -->
+        checking whether the form is valid or not, 
+   <!-- form.save() -->
+        if from is valid then save it.
+
+# we are taking username form the feild to print the success message here.
+   <!-- username = form.cleaned_data.get('username')
+        messages.successs(request, f'account created for {username}!') -->
+            taking username and priting the message with name of the user
+            [cleaned_data-- is a dictonery where it store the value of the data.]
+   <!-- return redirect('blog-home') -->
+            Once after saving the form we are redirecting to home page
+            [to get into home page we are using "name of the home page"]
+
+   <!-- else: -->
+   <!-- form = UserCreationForm() -->
+        if it is not post method then blank all the feilds.
+   <!-- return render (request, 'users/register.html', {'form':form}) -->
+            
+# To validate the form and save the details and redirecting to home page, if not validated   resetting to blank page.
+
+ex:
+<!-- def register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST) # -> it will create a new form with the data in it.
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data.get('username')
+            messages.success(request, f'Account created for the {username}!')
+            return redirect('blog-home')
+    else:
+        form = UserCreationForm()  #-> if it is not post we create a blank form
+    return render(request, 'users/register.html', {'form':form}) -->
+ 
+            
+
+# In the form there is no email id , try adding it.
+# So to add that we need to create a new forms where we can add the features into the existing from.
+
+For that we need to import the form from the django.
+# from django import forms
+We need the user model as well
+# from django.contrib.auth.models import User
+we need to import UserCreationForm as creatinga  new from.
+# from django.contrib.auth.forms import UserCreationForm
+
+Create a class to add the new fields, which inherits the UserCreationForm
+<!-- class UserRegisterForm(UserCreationForm):
+        [now inside the class we can add all the fields needed. ]
+    email = forms.EmailFeild() --> email = froms.EmailField(request=true)
+    [by default request=true, means mandatory,if request=false, the it is not mandatory]
