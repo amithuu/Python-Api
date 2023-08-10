@@ -311,7 +311,7 @@ ex:
         <a class = "navbar-item nav-link" href="{% url 'blog-about' %}">About</a> 
 -->
 
-<!-- ################################################################################### -->
+# [##################################################################################]
 # continue from line 330
 # creating a :admin-user: "Super User"
 
@@ -607,7 +607,7 @@ Aug. 8, 2023, 8:41 a.m.
       -->
 
 
-<!-- ######################################################################## -->
+# [#######################################################################]
 # Now adding the users an trying to get there data as well..
 
 # Not to merge the superuser data and real users data , create a neww "app" under the project, so that finding will be easy..
@@ -615,6 +615,9 @@ Aug. 8, 2023, 8:41 a.m.
 # Create an new app for the usres
 <!-- python manage.py startapp users -->
  # A new folder will be created.!
+
+# Once the app is created go to settings of main app, and add the app in "INSTALLED APPS"['users.apps.UsersConfig',] 
+<!-- 'users.apps.UsersCOnfig', -->
 
  # Inside the folder in "views.py" crete a form..
  [To create a form in Django we can create it easily by impoting the UserCreationForm]
@@ -716,10 +719,16 @@ ex:
         form = UserCreationForm()  #-> if it is not post we create a blank form
     return render(request, 'users/register.html', {'form':form}) -->
  
-            
+# after creation of "view.py" page, we need to add to the "urls." ['previoulsy.we.used.to.add.it.into.the.new."urls.py".page.but.can.add.it.directly.into.the."django"."urls.py".file']
+
+# for that we need to import "views.py" from users 
+<!-- from users import views as user_views -->
+
+<!-- path('register/', users_views.register, name='register'),-->
 
 # In the form there is no email id , try adding it.
-# So to add that we need to create a new forms where we can add the features into the existing from.
+
+# So to add that we need to create a new class/form from where we can add the features into the existing from["UserCreationForm"].
 
 For that we need to import the form from the django.
 # from django import forms
@@ -731,5 +740,103 @@ we need to import UserCreationForm as creatinga  new from.
 Create a class to add the new fields, which inherits the UserCreationForm
 <!-- class UserRegisterForm(UserCreationForm):
         [now inside the class we can add all the fields needed. ]
-    email = forms.EmailFeild() --> email = froms.EmailField(request=true)
+    email = forms.EmailFeild() --> 
+            email = forms.EmailField(request=true)
     [by default request=true, means mandatory,if request=false, the it is not mandatory]
+
+# for the same class additing an another class called ["Meta"]:
+
+<!-- class UserRegisterForm():
+    field-name: forms.datatypes()
+
+    class Meta:
+        model = User -> for which model/db ur adding this details.
+        fields = ['we need to add the attributes that need to show in the form-fields'] -->
+
+
+# This Meta class combines our class with the forms.
+
+# Once the adding of  "UserRegisterForm():" class, Go back to "views.py" and change the form to "UserRegisterForm():" rather than "UserCreationForm()" in POST all changes.
+
+# after this run the server again
+<!-- python manage.py runserver -->
+
+# as the application is not much designed, for that django has his in inbuilt auto "css" designing.
+
+# Need to add "crispy-forms" in the app ij settings.
+<!-- 'crispy_forms', -->
+<!-- 'crispy_bootstrap4' -->
+
+# At the end of the "settings.py" file in "main-project"
+<!-- CRISPY_TEMPLATES_FORM = 'bootstrap4' -->
+
+# once the above setting is done, back to "register.py" 
+<!-- {% load crispy_form_tags %} -->
+
+in the form we have used {{forms.as_p}} instead if this use 
+<!-- {{ forms|crispy }} -->
+
+# NOW WE CAN SEE THE CHANGES IN THE CSS STYLING OF THE REGISTER PAGE..
+
+# go to "basic.html" in body where <a> with register link, change the href->{% url register%}  [as we have given the name of url as register while linking.]
+
+# [#########################################################################]#
+ 
+ # AS register page is done, now create a login page so that users an get into home page/
+Continue from line 790
+
+
+
+# [Login_page_for_User]
+
+# As the Django has own login and logout forms as well, Just need to import from the "auth"."views".. 
+
+<!--'from django.contrib.auth import views as auth_views' -->
+# as django has inbuild "views.py" for logina and logout page.
+
+# In the main project "urls.py" import it and add the path as well.
+
+<!-- from django.auth import views as auth_views -->
+
+# Adding the path as we have the "views.py" by default.
+
+<!-- path('login/', auth_views.LoginView.as_view(template_name='users/login.html'), name='login') -->
+<!-- path('logout/', auth_views.LogoutView.as_view(template_name='users/logout.html', name='logout')) -->
+
+# create a login.html and logout.html in "users"
+
+# [Create a file "login.html"]
+
+copy paste the same code from "register.html" and make some changes..
+
+ <!-- <button class="btn btn-outline-info" type="submit">Login</button> -->
+
+ <!-- Do You Want To Create An Account? <a class="ml-2" href="{% url 'register'%}">Sign Up Now</a> -->
+
+
+# after this when we enter the login by entering correct details, we get the ['404error/http://127.0.0.1:8000/accounts/profile/'] 
+
+To Avoid this Issue, we can redirect the page to blog-home page,
+To do this need to change the seeting of the [login_redirect_url] 
+
+# [settings.py->lastline->LOGIN_REDIRECT_URL='blog-home']
+# Here redirecting after the user clicks on login to home page.
+
+# Once the user gets Login , he watches the Home which page which is "base.html"[we have a login link in that page], [even after the user has logged in it is showing login link], [so need to chnnge that, if user is logged in it has to show "logout" else "login"]
+
+# How to check whether the user is logged in or not!!
+
+# For that as well Django has this own functionality [user.is_authenticated]
+
+<!-- {% if user.is_authenticated %} 
+            then show Logout.
+    else:
+            then show login/register
+    {% endif %} -->
+
+ # [Need to make the changes in "base.html" file]
+ <div class =nav_bar>
+    {% if user.is_authenticated %}
+        <a href="{% url 'logout'%}">Logout</a>
+
+ </div>
