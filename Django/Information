@@ -840,3 +840,165 @@ To do this need to change the seeting of the [login_redirect_url]
         <a href="{% url 'logout'%}">Logout</a>
 
  </div>
+ else:
+ Home page with Login/register..
+
+
+
+
+# [######################################################################]
+ now on creating a user profile page.
+
+ once the user login's he will be redirected to users profile, instead og home page.
+# Create a file called "profile.html" under "users"[add some content to show into it.]
+
+# [profile.html]
+
+<!-- {% extends 'blogs/base.html'%}
+{% load_crispy_tags %}
+{% block content%}
+    <h1> {{user.username}}</h1>  -> if the user is logged in it will display the username..
+{% endblock content%} -->
+
+
+# In "views.html" create a function to access the "profile.html" page.
+<!-- def profile(request):
+        return render(request, 'users/profile.html') -->
+    [ here we are rendering the file from users.]
+
+# Add the link/path to "profile.html" page in settings.
+path=['profile/', users_views.profile, name='profile']
+
+# add the link to base.html to display the link when the user is logged-in
+[ in navigation bar]
+
+<!-- <a class = 'nav-item nav-link', href = "{% url 'profile'%}" >Profile</a> -->
+
+# After logged in User will get to see the 2 links profile and logout, if user has logged out and if user redirects to profile page using tab menu "localhost/profile/", then [usre willnot get his username displayed, as he has logged out, there is no user in the username db as of now.]
+
+# TO SOLVE THIS.
+# we need to add the decoraters for the checking of "users behavior"
+
+# In "view.py" 
+<!-- from django.contrib.auth.decorators import login_required -->
+
+@ the top of the function[def profile] add the decorater, 
+
+<!-- @login_required -> 
+
+    This decorater will check whether the user has loggin in or not, if the user is not logged in, then redirectes to the loginpage. -->
+
+# Try to access the "profile/" without logging in 
+[GET404ERROR]
+    <!-- [Page not found (404)
+    Request Method:	GET
+    Request URL: http://127.0.0.1:8000/accounts/login/?next=/profile/] -->
+
+# As the django is trying to access this link[accounts/login/?next=/profile/] after the accessing profile page, we need to send the django to login page,
+
+# to redirect in settings 
+<!-- LOGIN_URL ='login' -->
+
+# Now works perfect.[login/?next=/profile/]-> this indicates that if the user is logged in next, send user to profile page.
+
+# Now as it is displaying only the username of the user, lets make it little intresting showing images as well.
+
+# So build an model, where can add attributes for the "profile.py" page, to db.
+<!-- from django.contrib.auth.models import User -->
+
+<!-- class Profile(models.Model)
+         user = models.OneToOneField(User, on_delete=models.CASCADE)->OneToOneField(this function matches the records from User db)image = models.ImageField(default='default.jpg',upload_to='profile_pics')
+         
+        def __str__(self):
+            return f'{self.user.username} Profile'-->[with this name the profile will be saved in db[admin panel as well]]
+
+# Now make changes in the database to maike changes, we need to add it to database. i.e-migrations
+
+<!-- python3 manage.py make migrations -->
+<!-- python3 manage.py migration -->
+
+# run the server after changes.
+
+# Adding the profile content to Admin Page[in "admin.py" file register the page]
+<!-- from .models import Profile
+        admin.site.register(Profile) -->
+# Now to Check for the details or to run query make shell terminal
+<!-- python3 manage.py shell -->
+>> from django.contrib.auth.models import User
+>> user = User.objects.filter(username='amith')
+>> user
+>> user.profile
+>> user.profile.image
+>> user,profile.image.width
+
+# AS PROFILE GETS MORE ,STORING IMAGES IN A DIRECTCY WILL BE NOT EFFICIENT SO, MAKING IT A SINGLE DIRECTORY UNDER THE PROJECT   WHICH MAKES MORE EFFICIENT TO GET THE IMAGES WHEN NEEDED.
+
+# [To get the images to be stored in a static file for all the user,[IN-SETTINGS]]
+# [MEDIA_ROOT=os.path.join(BASE_DIR,'media')] -> which creates the new directory under the main projects and all the images will be saved under this directory.[NO MATTER WHAT OS USER ID USING, HE GETS THE IMAGES DISPLAYED WITH THE FULL PATH JOINED.]
+
+# [MEDIA_URL='/media/'] -> the link for the websites to store the images.[IT IS AN PUBLIC URL]
+
+
+# MAKING SOME CHANGES IN THE "PROFILE.PY" AS DISPLAYING THE IMAGE ON THE PAGE.
+<!-- {% extends 'blog/base.html'%} 
+     {% load crispy_forms_tags %}
+     {% block content %}
+        <div class = 'content-section'>
+            <div class = 'media'>
+                <img class = 'rounded-circle account-img', src='{{user.profile.image.url}}'>
+                <div class = 'media-body'>
+                    <h2 class = 'account-heading'> {{user.username}}</h2>
+                    <p class = 'text-secondary'> {{user.email}}</p>
+                </div>
+            </div>
+        </div>
+    {% endblock content %}-->
+
+# This bootstarp page will give the viewable look for the user profile.
+
+# AS THE [MEDIA_URL] IS BEEN ADDED IN SETTINGS, NEED TO ADD THAT IN URLS. AS WELL TO WORK,
+
+<!-- from django.cong import settings           -> [from settings getting the media_url and path]
+     from django.conf.urls.static import static --> [getting the static images from media_root]
+
+# [THIS-WORKS-ONLY-WHEN-THE-SETTINGS-IS-IN-DEBUG-MODE]
+
+<!-- if settings.DEBUG:
+        urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) -->[Adding the link to save the images]
+
+# As we dnt have any "default.jgp" images, add the default image in the media file.[named=default.jpg]
+
+# Everytime a suer login in need to create the profile from teh admin page, to avoid that making it automate is simpler way.
+
+# [SIGNALS]->    USING THE SIGNALS FETCH THE DATA IN THE BACKEND AND CREATING A PROFILE AUTOMATICAALY.
+
+ # [LOGIC-> IF profile is posted and saved[POST_SAVE]], 
+ <!-- from django.db.models.signals import post_save -->[a signal gets fired/generated once the post is saved.]
+ <!-- from django.contrib.auth.models import User -->   [a signal to fetch the data of the current user][it also acts a [Sender]]
+<!--  from django.dispatch import receiver -->          [dispatch function dispathes the content throug receiver.]
+<!--  from .models import Profile -->                   [to get the data from the profile to diplay]
+
+<!-- @receiver(post_save, sender=User)  -->
+         -> this decorations sends the signal as created when the post is saved by the user.[which is createdin next argumnet]
+<!-- def create_profile(sender,created,instance, **kwargs): -->
+         -> [sender=User,instance=object-created-for-profile,created=a-boolen-which-tells-profile-is-created-or!not]
+<!--    if created:
+            Profile.objects.create(user=instance) -->
+    -> [instance created by the User is added to user]["instance is like": user=User.objects.filter(username='instance/object')]
+ 
+ # Full Code of function
+ <!-- @receiver(post_save,sender=User) 
+      def create_profile(sender, created,instance, **kwargs)
+                if created:
+                    Profile.objects.create(user=instance) -->
+
+# To save the profile
+<!-- @receiver(post_save, sender=User)
+      def save_profile(sender, instance, **kwargs) [as we are just saving we dnt need created.]
+        instance.profile.save() -->  -> For Saving the profile in admin panel.[instance=user]
+    
+# In the "apps.py" we need to  import the signals 
+
+<!-- def ready(self):
+        import users.signals --> [this is done because of some safety as per "django.document"]
+        
