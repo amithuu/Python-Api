@@ -1002,3 +1002,111 @@ path=['profile/', users_views.profile, name='profile']
 <!-- def ready(self):
         import users.signals --> [this is done because of some safety as per "django.document"]
         
+
+
+
+
+[# update the existing details]
+# [########################################################################]
+# Now lets try to update the user information in the profile page itself.
+# To update the details we need form, so already we a form for the "register.py"[UserRegisterForm], There it self add the 2 more function.
+
+[There attributes and the fields.]
+# [User Details Updations]
+<!-- def UserUpdateForm(forms.ModelForms) -> "inheriting the ModelForms[which gives the default forms structure]"
+        email=forms.EmailField()
+        phone_number=forms.Charfield()
+        
+        class Meta: -> this is part of the function which creates a link with the original-form and our-form
+            model = User  -> we get the attributes required from the User DataBase
+            fields = ['username', 'phone_number']-->
+
+# [User Profile Picture Updation]
+<!-- def UserProfileForm(forms.ModelForms)
+
+        -> as there is no extra attributes that we need to add for , so we are geting from "Profile model" 
+
+        class Meta:
+            model = Profile
+            fields = ['image'] -->
+
+[Once this Forms are done we need to linki this to "views.py", from views--> we will be linking to respected "page.html", page[profile.html]]
+
+# in "views.py"
+
+# As we have added the register page we need to add these 2 forms as well
+
+<!-- from .forms import UserRegisterForm, UserUpdateForm,UserProfileForm -->
+
+# [ In the profile function we need to pass these functions as an context]
+
+<!--@login_required
+    def profile(request):
+        u_form =UserUpdateForm()
+        p_form - UserProfileForm()
+
+        context ={
+            'u_form':u_form, -> throgh the context passing the attributes 
+            'p_form':p_form    -> as preivously we are sending the direct attibutes to the context, instead we are passing the entire form to the context.
+        }
+
+        return render(request,'users/profile.html', context)  -->
+
+# As we are passing the context, the context has to be displayed in thr profile form, so create a <div> with<form> add the context into it.
+ 
+ # in "profile.html" page
+
+ <!-- <form method='post' enctype='multipart/form-data'> -> "enctype is use to store the image safely"
+            <fieldset class = 'form-group'>
+                <legend class='border-bottom mb-4'>Update Profile</legend>
+                {{u_form}} -> here the form attributes gets displayed
+                {{p_form}} -> here also the image will add option will be displayed
+            </fieldset>
+            <div class = 'form=group'>
+                <button class = 'btn btn-outline-info' type='submit'>Update</button>
+            </div>
+        </form> -->
+
+# ["The above form should be after the display of user-profile"].
+
+# [Run-Server_Now] # pyton3 manage.py runserver
+
+# here once we are click on update button, there is no place where the data is being updated, right..
+# to update the data in the back-end, how we did for registration page, same like, nut here we use [instance] of the [user] to update the data.
+
+<!-- if request.method=='POST':
+        u_form=UserUpdateForm(request.POST,instance=request.user) ->[need to post the data, user will the instance]
+        p_form=UsaerProfileForm(request.POST,
+                                request.FILES,
+                                instance=request.user.profile)
+        if u_form.is_valid() and p_form.is_valid():
+            u_from.save()
+            p_form.save()
+            message.success(request,'details updated successfulyy') 
+            return redirect('profile')
+    else:
+        u_form=UserUpdateFrom(instance=request.user) ->if user is not posting anything,then old data will be displayed.
+        p_form=UserProfileForm(instance=request.user.profile) ->f user is not posting anything,then old data will be displayed.
+--> 
+
+# IMAGE RESIZE:
+# as we are saving our users profile image, if the size of the image is more then application gets less perfomance speed, to resize the users image
+
+<!-- from PIL import Image -->
+
+<!-- def save(self):
+        super().save() -> firstly it will save the image and then while storing gets resized.
+        img = Image.open(self.image.path)
+        if img.height>300 and img.width>300:->we are explicitly checking that image hei and wid is>300 then resize,
+            resize_img = (300,300)
+            img.thumbail(resize_img)
+            img.save(self.image.path) -->
+
+# An extra feature
+# if u need to add an image at the home page, beside the user profile, then add an image at the "home.html" page.
+
+<img class = 'circle_rounded article-img' scr='{{post.author.profile.image.url}}'>
+
+# [add this inside the arcticle and before the body of the every div.]
+
+  
