@@ -50,7 +50,7 @@ check
 
 # Some of the files we find once the directory is found.
 
-<!-- init: this is the file where it shouws it is pyhton file project..
+<!-- init: this is the file where it shows it is pyhton file project..
 
 settings : this is the file that where our security and some predefined application given by django is stored..
 
@@ -1108,5 +1108,3 @@ path=['profile/', users_views.profile, name='profile']
 <img class = 'circle_rounded article-img' scr='{{post.author.profile.image.url}}'>
 
 # [add this inside the arcticle and before the body of the every div.]
-
-  
