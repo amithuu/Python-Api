@@ -3,10 +3,10 @@ CGI: common gate way intefrace..
 
 [pip install django]
 
-    this is an open source web development framework,,hwich is mainy used to framework..
+    this is an open source web development framework,,hwich is mainy used to web-framework..
 
 # some of the admin classes/function  of django:django-admin
-
+t
 check
     compilemessages
     createcachetable
